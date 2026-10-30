@@ -10,7 +10,7 @@ import init, {
   Simulation,
   runFrequencySweep as sweep,
   version,
-} from "./wasm/repath.js";
+} from "./wasm/repath";
 
 export type LogicState = "low" | "high" | "unknown" | "highz";
 

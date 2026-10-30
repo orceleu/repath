@@ -22,7 +22,7 @@
 <header
 	class="flex items-center gap-4 border-b border-border bg-panel px-3 py-1.5 max-[900px]:gap-2 max-[900px]:px-2.5"
 >
-	<strong class="shrink-0 text-base tracking-tight">repath</strong>
+	<strong class="shrink-0 text-base tracking-tight">circuitskill</strong>
 
 	<div
 		class="relative flex min-w-0 flex-1 items-center gap-1.5 [scrollbar-width:none] max-[900px]:overflow-x-auto max-[900px]:p-0.5"

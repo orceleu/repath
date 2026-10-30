@@ -52,7 +52,7 @@ const FALLBACK: Theme = {
 	symbol: '#cfd7e4',
 	pin: '#6d7a8f',
 	pinDigital: '#d09b4a',
-	accent: '#4ea8ff',
+	accent: '#059669',
 	/**
 	 * Yellow, and nothing else on the canvas is.
 	 *

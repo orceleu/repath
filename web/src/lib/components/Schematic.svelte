@@ -943,7 +943,7 @@
 		gap: 0.75rem;
 		padding: 0.4rem 0.75rem;
 		background: var(--panel-bg);
-		border-bottom: 1px solid var(--accent, #4ea8ff);
+		border-bottom: 1px solid var(--accent, #059669);
 		color: var(--text, inherit);
 		font-size: 0.8rem;
 		pointer-events: none;
@@ -953,7 +953,7 @@
 		pointer-events: auto;
 		padding: 0.3rem 0.6rem;
 		font-size: 0.75rem;
-		border: 1px solid var(--accent, #4ea8ff);
+		border: 1px solid var(--accent, #059669);
 		border-radius: 5px;
 		background: var(--control-bg);
 		color: inherit;
@@ -968,7 +968,7 @@
 	.rename {
 		position: absolute;
 		padding: 2px 3px;
-		border: 1px solid var(--accent, #4ea8ff);
+		border: 1px solid var(--accent, #059669);
 		border-radius: 3px;
 		background: var(--panel-bg);
 		color: var(--text, inherit);

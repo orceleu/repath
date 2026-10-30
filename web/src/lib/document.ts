@@ -12,12 +12,70 @@ export function saveToFile(app: App): void {
 	const url = URL.createObjectURL(blob);
 	const link = document.createElement('a');
 	link.href = url;
-	link.download = 'circuit.repath.json';
+	link.download = 'circuit.circuitskill.json';
 	link.click();
 	// After the click has been dispatched, not during it. Revoking inside the
 	// same turn is a race the common browsers happen to win and Safari does
 	// not, and losing it means the Save button doing nothing at all.
 	setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+export type CircuitImageFormat = 'png' | 'jpeg';
+
+/**
+ * Export the visible schematic layers as a single image.
+ *
+ * The editor's overlay is intentionally excluded so selection handles and
+ * in-progress tool feedback do not become part of the circuit image.
+ */
+export async function exportCircuitImage(format: CircuitImageFormat): Promise<void> {
+	const layers = Array.from(document.querySelectorAll<HTMLCanvasElement>('canvas[data-layer]')).filter(
+		(canvas) => canvas.dataset.layer !== 'overlay'
+	);
+	const first = layers[0];
+	if (!first || first.width === 0 || first.height === 0) {
+		throw new Error('The circuit drawing is not ready to export.');
+	}
+
+	const output = document.createElement('canvas');
+	output.width = first.width;
+	output.height = first.height;
+	const context = output.getContext('2d');
+	if (!context) throw new Error('This browser could not create an image canvas.');
+
+	context.fillStyle =
+		getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim() || '#0e1116';
+	context.fillRect(0, 0, output.width, output.height);
+	for (const layer of layers) context.drawImage(layer, 0, 0);
+
+	const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
+	const blob = await new Promise<Blob>((resolve, reject) => {
+		output.toBlob(
+			(image) => (image ? resolve(image) : reject(new Error('The browser could not encode the image.'))),
+			mimeType,
+			format === 'jpeg' ? 0.92 : undefined
+		);
+	});
+
+	const url = URL.createObjectURL(blob);
+	const link = document.createElement('a');
+	link.href = url;
+	link.download = `circuit.circuitskill.${format === 'jpeg' ? 'jpg' : 'png'}`;
+	link.click();
+	setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+export async function exportCircuitImageAndReport(
+	app: App,
+	format: CircuitImageFormat
+): Promise<void> {
+	try {
+		await exportCircuitImage(format);
+		toasts.show(`Circuit exported as ${format.toUpperCase()}`);
+	} catch (cause) {
+		const why = cause instanceof Error ? cause.message : String(cause);
+		app.notice = `The circuit image could not be exported. ${why}`;
+	}
 }
 
 /**

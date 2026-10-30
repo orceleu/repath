@@ -2,7 +2,14 @@
 	import { Eraser, FileDown, FolderOpen, ListOrdered, Redo2, Share2, Undo2 } from '@lucide/svelte';
 	import { Button, Menu, MenuItem, MenuSeparator, Select, ToolbarSeparator } from '$lib/ui';
 	import { SYMBOL_STANDARDS } from '$lib/schematic/symbols';
-	import { clearAndReport, copyStepsAndReport, openFromFile, saveToFile, shareAndReport } from '$lib/document';
+	import {
+		clearAndReport,
+		copyStepsAndReport,
+		exportCircuitImageAndReport,
+		openFromFile,
+		saveToFile,
+		shareAndReport
+	} from '$lib/document';
 	import { app } from '$lib/state.svelte';
 
 	type Props = {
@@ -60,6 +67,13 @@
 <Menu label="File" title="Save, open, or hand over this circuit">
 	<MenuItem onAction={() => saveToFile(app)} shortcut="Ctrl+S"><FileDown /> Save to a file</MenuItem>
 	<MenuItem onAction={() => openFromFile(app)} shortcut="Ctrl+O"><FolderOpen /> Open a file…</MenuItem>
+	<MenuSeparator />
+	<MenuItem onAction={() => void exportCircuitImageAndReport(app, 'png')}>
+		<FileDown /> Export circuit as PNG
+	</MenuItem>
+	<MenuItem onAction={() => void exportCircuitImageAndReport(app, 'jpeg')}>
+		<FileDown /> Export circuit as JPEG
+	</MenuItem>
 	<MenuSeparator />
 	<MenuItem
 		onAction={() => copyStepsAndReport(app)}

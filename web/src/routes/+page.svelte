@@ -309,7 +309,7 @@
 </script>
 
 <svelte:head>
-	<title>repath — free circuit simulator</title>
+	<title>circuitskill — free circuit simulator</title>
 	<meta
 		name="description"
 		content="A free and open source mixed-signal circuit simulator that runs entirely in your browser."

@@ -67,6 +67,13 @@ npm run dev
 The production build is fully static — `npm run build` produces a directory you can
 drop on any host.
 
+Vercel production deployments use the prebuilt artifact from
+[the CI workflow](./.github/workflows/ci.yml): it builds the WebAssembly engine
+before the web app and uploads the finished static site with `vercel deploy
+--prebuilt`. Do not use Vercel's automatic Git build for this project; the
+generated `web/src/lib/wasm` bindings are intentionally not committed, so a
+direct Vercel build cannot resolve `./wasm/repath.js`.
+
 ## How it works
 
 ```

@@ -20,6 +20,7 @@
 	import { PANEL_LIMITS, layout, type Panel } from '$lib/layout.svelte';
 	import { decodeCircuit, shareUrl } from '$lib/share';
 	import { app } from '$lib/state.svelte';
+	import { loadProjects } from '$lib/projects.svelte';
 
 	let schematic = $state<ReturnType<typeof Schematic> | null>(null);
 	/**
@@ -132,6 +133,12 @@
 		}
 		let origin = resumed?.origin ?? '';
 		if (!resumed && hash) origin = (await openLink(hash)) ? hash : '';
+
+		try {
+			loadProjects();
+		} catch (cause) {
+			app.notice = `The project library could not be opened. ${cause instanceof Error ? cause.message : String(cause)}`;
+		}
 
 		if (!store) return;
 		const id = resumed && (await claim(resumed.id)) ? resumed.id : newDraftId();

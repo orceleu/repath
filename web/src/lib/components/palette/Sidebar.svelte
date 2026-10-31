@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Examples from './Examples.svelte';
 	import Palette from './Palette.svelte';
+	import Projects from './Projects.svelte';
 
 	/**
 	 * The left panel: parts to draw with, or whole circuits to start from.
@@ -9,12 +10,13 @@
 	 * the panel rather than one of them living in a menu. The tab is remembered
 	 * per browser, like the folded shelves.
 	 */
-	type Tab = 'parts' | 'examples';
+	type Tab = 'parts' | 'examples' | 'projects';
 	const KEY = 'repath.sidebarTab';
 
 	function load(): Tab {
 		try {
-			return localStorage.getItem(KEY) === 'examples' ? 'examples' : 'parts';
+			const saved = localStorage.getItem(KEY);
+			return saved === 'examples' || saved === 'projects' ? saved : 'parts';
 		} catch {
 			return 'parts';
 		}
@@ -33,7 +35,8 @@
 
 	const TABS: Array<{ id: Tab; label: string }> = [
 		{ id: 'parts', label: 'Components' },
-		{ id: 'examples', label: 'Examples' }
+		{ id: 'examples', label: 'Examples' },
+		{ id: 'projects', label: 'Projects' }
 	];
 </script>
 
@@ -47,7 +50,7 @@
 				aria-selected={tab === id}
 				aria-controls="sidebar-panel"
 				onclick={() => choose(id)}
-				class="-mb-px cursor-pointer border-0 border-b-2 bg-transparent px-2 pb-1.5 text-ui {tab === id
+				class="-mb-px cursor-pointer border-0 border-b-2 bg-transparent px-1.5 pb-1.5 text-ui {tab === id
 					? 'border-accent text-fg'
 					: 'border-transparent text-muted hover:text-fg'}"
 			>
@@ -58,8 +61,10 @@
 	<div id="sidebar-panel" role="tabpanel" aria-labelledby="sidebar-tab-{tab}" class="min-h-0 flex-1">
 		{#if tab === 'parts'}
 			<Palette />
-		{:else}
+		{:else if tab === 'examples'}
 			<Examples />
+		{:else}
+			<Projects />
 		{/if}
 	</div>
 </div>

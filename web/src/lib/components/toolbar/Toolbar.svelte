@@ -1,8 +1,12 @@
 <script lang="ts">
-	import { Search } from '@lucide/svelte';
+	import { FilePlus2, Save, Search } from '@lucide/svelte';
 	import { Button, ToolbarSeparator } from '$lib/ui';
 	import AnalysisControls from './AnalysisControls.svelte';
 	import DocumentControls from './DocumentControls.svelte';
+	import ProjectNameDialog from './ProjectNameDialog.svelte';
+	import { createProject, projectLibrary, saveProject } from '$lib/projects.svelte';
+	import { app } from '$lib/state.svelte';
+	import { toasts } from '$lib/ui/toast/toasts.svelte';
 
 	type Props = {
 		share: () => Promise<string>;
@@ -11,6 +15,35 @@
 	};
 
 	let { share, onFind }: Props = $props();
+	let projectDialog = $state<'save' | 'new' | null>(null);
+
+	const activeProject = $derived(
+		projectLibrary.projects.find((project) => project.id === projectLibrary.activeId)
+	);
+	const suggestedName = $derived(activeProject?.name ?? `Project ${projectLibrary.projects.length + 1}`);
+
+	function submitProjectName(name: string) {
+		try {
+			if (projectDialog === 'new') {
+				const emptyDocument = JSON.stringify({
+					version: 1,
+					schematic: { instances: [], wires: [], subcircuits: [], blocks: [], groups: [] },
+					stopTime: 0.001,
+					probes: [],
+					settings: {}
+				});
+				createProject(name, emptyDocument);
+				app.fromJSON(emptyDocument);
+				toasts.show(`Created project “${name.trim()}”`);
+			} else {
+				saveProject(name, app.toJSON());
+				toasts.show(`Saved project “${name.trim()}”`);
+			}
+			projectDialog = null;
+		} catch (cause) {
+			app.notice = `The project could not be saved. ${cause instanceof Error ? cause.message : String(cause)}`;
+		}
+	}
 </script>
 
 <!--
@@ -29,6 +62,22 @@
 	>
 		<AnalysisControls />
 
+		<Button
+			variant="primary"
+			onclick={() => (projectDialog = 'save')}
+			aria-label="Save project"
+			title="Save the current circuit to your project library"
+		>
+			<Save /> <span class="max-[1200px]:hidden">Save project</span>
+		</Button>
+		<Button
+			onclick={() => (projectDialog = 'new')}
+			aria-label="New project"
+			title="Create and open an empty project"
+		>
+			<FilePlus2 /> <span class="max-[1200px]:hidden">New project</span>
+		</Button>
+
 		<span class="flex-1"></span>
 		<!-- Where everything else is: every part, every command, by name. -->
 		<Button
@@ -45,3 +94,12 @@
 		<DocumentControls {share} />
 	</div>
 </header>
+
+{#if projectDialog}
+	<ProjectNameDialog
+		mode={projectDialog}
+		initialName={suggestedName}
+		onSubmit={submitProjectName}
+		onCancel={() => (projectDialog = null)}
+	/>
+{/if}
